@@ -47,6 +47,7 @@ from pandas.api.types import (  # type: ignore[attr-defined]
     is_list_like,
 )
 from pandas.tseries.offsets import DateOffset
+from pandas.io.common import is_url
 import pyarrow as pa
 import pyarrow.parquet as pq
 from pyspark.sql import functions as F, Column
@@ -1171,7 +1172,7 @@ def read_excel(
             **kwds,
         )
 
-    if isinstance(io, str):
+    if isinstance(io, str) and not is_url(io):
         # 'binaryFile' format is available since Spark 3.0.0.
         binaries = default_session().read.format("binaryFile").load(io).select("content").head(2)
         io_or_bin = binaries[0][0]
